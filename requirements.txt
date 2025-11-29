@@ -1,7 +1,6 @@
 Flask==2.3.3
 gunicorn==21.2.0
 numpy==1.26.4
-blis==0.7.9
-spacy==3.7.2
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
+spacy==3.4.4
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.4.4/en_core_web_sm-3.4.4-py3-none-any.whl
 transformers==4.37.2
