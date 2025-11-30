@@ -1,13 +1,21 @@
 print("Starting Flask App...")
 from flask import Flask, request, jsonify
 import os
+os.environ["SPACY_WARNING_IGNORE"] = "W108"
+os.environ["SPACY_DISABLE_BLIS"] = "true"
 import spacy
 from transformers import pipeline
 
 app = Flask(__name__)
 
-import en_core_web_sm
-nlp = en_core_web_sm.load()
+import subprocess
+
+try:
+    import en_core_web_sm
+except:
+    subprocess.run(["python3", "-m", "spacy", "download", "en_core_web_sm"])
+
+nlp = spacy.load("en_core_web_sm", disable=["parser", "ner", "tagger"])
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 @app.route("/process_message", methods=["POST"])
