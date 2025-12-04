@@ -37,6 +37,7 @@ Perfect for teams that want to save time, improve clarity, and boost productivit
            │  Zoho Cliq Response  │
            │  Clean Summary Text  │
            └──────────────────────┘
+           
 
 🖼️ Workflow Diagram (User Perspective)
 User → Types "@summarybot summarize message"
