@@ -1,87 +1,139 @@
-Cliq Summary Bot
+🚀 Cliq Summary Bot
+An AI-powered Zoho Cliq bot that converts long chats into clear, concise summaries.
 
-A smart, lightweight summarization bot for Zoho Cliq that condenses long messages, chats, or documents into short, clear summaries using NLP/LLM-powered text processing.
+🧠 What is Cliq Summary Bot?
 
-Built by Team Z CODE.
+Cliq Summary Bot is an intelligent summarization assistant for Zoho Cliq.
+It automatically condenses long conversations, documents, or messages into short, readable summaries using LLM/NLP-based APIs.
 
-🌐 Deployment Status
+Perfect for teams that want to save time, improve clarity, and boost productivity.
 
-This project is currently not deployed.
-A live hosted endpoint will be added soon.
+🖼️ Architecture Diagram
+           ┌──────────────────────┐
+           │        User          │
+           │  sends message/text  │
+           └──────────┬───────────┘
+                      │
+                      ▼
+           ┌──────────────────────┐
+           │   Zoho Cliq Bot      │
+           │ (Slash Cmd / Mention)│
+           └──────────┬───────────┘
+                      │ Forwards text
+                      ▼
+           ┌──────────────────────┐
+           │ Backend Server       │
+           │ Node/Python Handler  │
+           └──────────┬───────────┘
+                      │ Sends to API
+                      ▼
+           ┌──────────────────────┐
+           │ Hugging Face API     │
+           │  (LLM Summarizer)    │
+           └──────────┬───────────┘
+                      │ Returns summary
+                      ▼
+           ┌──────────────────────┐
+           │  Zoho Cliq Response  │
+           │  Clean Summary Text  │
+           └──────────────────────┘
 
-In the meantime, you can:
+🖼️ Workflow Diagram (User Perspective)
+User → Types "@summarybot summarize message"
+        ↓
+Bot Receives Text  
+        ↓  
+Bot Sends Text → Hugging Face Summarizer  
+        ↓  
+Receives Summary  
+        ↓  
+Bot Replies in Cliq with Clean Output  
 
-Explore the code in the repository
+📸 Image Placeholders (replace with real screenshots)
+Bot in Action
 
-Run the bot locally
-
-Modify the config to integrate your own API keys
-
-Use the included scripts to test summarization via Hugging Face API
-
-If you want to set up your own deployment, instructions are included below.
+Zoho Cliq Slash Command UI
 
 ✨ Features
 
-Summarizes long texts, conversations, or uploaded docs
+✔ Summarizes long chats, threads, and docs
 
-Supports short, medium, and detailed summaries
+✔ Short / Medium / Detailed summary modes
 
-Lightweight — no heavy ML libraries (no PyTorch / no spaCy)
+✔ No heavy ML dependencies (no PyTorch / no spaCy)
 
-Uses external APIs (Hugging Face) for inference
+✔ Uses cloud inference APIs
 
-Works with Zoho Cliq slash commands or bot mentions
+✔ Works via @mention or slash commands
 
-🛠️ Tech Stack
+✔ Lightweight and easy to deploy
 
-Zoho Cliq Bot SDK
+⚙️ Tech Stack
+Component	Technology
+Bot Platform	Zoho Cliq
+Backend	Node.js / Python
+AI Engine	Hugging Face Inference API
+Auth	API Key
+Deployment	Local / Cloud (Render, Railway, etc.)
+🚧 Deployment Status
 
-Node.js / Python backend (your choice)
+The bot is currently not deployed.
+A live server link will be added in the next update.
 
-Hugging Face Inference API
+You can still:
 
-Webhook integration for message handling
+Run it locally
 
-📦 Installation (Local)
+Explore the code
 
-Clone the repo:
+Replace with your API key
 
+Deploy your own backend anytime
+
+🔧 Local Installation
 git clone https://github.com/<username>/cliq_summary_bot.git
 cd cliq_summary_bot
+npm install   # or pip install -r requirements.txt
 
 
-Install dependencies:
-
-npm install
-
-
-(or pip install -r requirements.txt if Python)
-
-Add your Hugging Face API key in .env:
+Add your Hugging Face key:
 
 HF_API_KEY=your_key_here
 
 
-Run locally:
+Run:
 
-npm start
+npm start   # or python app.py
 
-📘 Usage
+🧪 Usage
 
-Inside Zoho Cliq, after connecting the bot:
+In Zoho Cliq:
 
-@summarybot summarize <text>
+/summarize The meeting discussion goes here...
 
 
 or
 
-/summarize <message>
+@summarybot summarize the last 20 messages
+
+📂 Project Structure
+cliq_summary_bot/
+│── src/
+│   ├── api_handler.js
+│   ├── cliq_handler.js
+│   └── utils.js
+│── config/
+│   └── env.example
+│── assets/
+│   └── images (screenshots)
+│── README.md
+│── package.json
+└── .env
+
+🤝 Team
+
+Team Z CODE
 
 📄 License
 
-This project is open-source under the MIT License.
-
-🤝 Contributing
-
-Feel free to open issues or submit pull requests.
+MIT License
