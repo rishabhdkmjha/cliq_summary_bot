@@ -1,13 +1,24 @@
 from flask import Flask, request, jsonify
 from transformers import pipeline
 import re
+import os
 
 app = Flask(__name__)
 
 print("Starting Flask App...")
-print("Loading model: facebook/bart-large-cnn...")
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-print("Model loaded successfully!")
+print("Loading lightweight model for summarization...")
+
+# Use smaller, more memory-efficient model
+try:
+    summarizer = pipeline(
+        "summarization", 
+        model="sshleifer/distilbart-cnn-12-6",
+        device=-1  # Force CPU usage
+    )
+    print("Model loaded successfully!")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    summarizer = None
 
 def extract_action_items(text):
     """Extract action items from conversation text"""
@@ -32,6 +43,7 @@ def home():
     return jsonify({
         "status": "running",
         "message": "Cliq Summary Bot API is active",
+        "model": "sshleifer/distilbart-cnn-12-6",
         "endpoints": {
             "/process_message": "POST - Process conversation and return summary + action items"
         }
@@ -40,6 +52,9 @@ def home():
 @app.route('/process_message', methods=['POST'])
 def process_message():
     try:
+        if summarizer is None:
+            return jsonify({"error": "Model not loaded"}), 500
+            
         data = request.get_json()
         
         if not data or 'conversation' not in data:
@@ -50,11 +65,17 @@ def process_message():
         if len(conversation) < 50:
             return jsonify({"error": "Conversation too short to summarize"}), 400
         
+        # Limit input length to save memory
+        max_input_length = 1024
+        if len(conversation) > max_input_length:
+            conversation = conversation[:max_input_length]
+        
         summary_result = summarizer(
             conversation,
-            max_length=150,
+            max_length=130,
             min_length=30,
-            do_sample=False
+            do_sample=False,
+            truncation=True
         )
         summary = summary_result[0]['summary_text']
         
@@ -70,4 +91,5 @@ def process_message():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
