@@ -1,87 +1,73 @@
-print("Starting Flask App...")
 from flask import Flask, request, jsonify
-import os
+from transformers import pipeline
+import re
 
 app = Flask(__name__)
 
-# Lazy load the model only when needed
-summarizer = None
+print("Starting Flask App...")
+print("Loading model: facebook/bart-large-cnn...")
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+print("Model loaded successfully!")
 
-def get_summarizer():
-    global summarizer
-    if summarizer is None:
-        from transformers import pipeline
-        print("Loading summarization model...")
-        summarizer = pipeline(
-            "summarization", 
-            model="sshleifer/distilbart-cnn-12-6",
-            device=-1  # Force CPU
-        )
-        print("Model loaded successfully!")
-    return summarizer
+def extract_action_items(text):
+    """Extract action items from conversation text"""
+    action_patterns = [
+        r'(?:will|should|need to|must|have to|going to)\s+(.+?)(?:\.|$)',
+        r'(?:todo|task|action item):\s*(.+?)(?:\.|$)',
+        r'(?:decide[d]?|agree[d]?|plan)\s+to\s+(.+?)(?:\.|$)'
+    ]
+    
+    action_items = []
+    for pattern in action_patterns:
+        matches = re.finditer(pattern, text, re.IGNORECASE)
+        for match in matches:
+            item = match.group(1).strip()
+            if len(item) > 10 and item not in action_items:
+                action_items.append(item)
+    
+    return action_items[:5]
 
-@app.route("/process_message", methods=["POST"])
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        "status": "running",
+        "message": "Cliq Summary Bot API is active",
+        "endpoints": {
+            "/process_message": "POST - Process conversation and return summary + action items"
+        }
+    })
+
+@app.route('/process_message', methods=['POST'])
 def process_message():
-    data = request.get_json()
-    conversation = data.get("conversation", "")
-    
-    if not conversation:
-        return jsonify({"error": "No conversation provided"}), 400
-    
     try:
-        # Get the summarizer
-        model = get_summarizer()
+        data = request.get_json()
         
-        # Generate summary
-        summary = model(
-            conversation, 
-            max_length=80, 
-            min_length=20, 
+        if not data or 'conversation' not in data:
+            return jsonify({"error": "No conversation text provided"}), 400
+        
+        conversation = data['conversation']
+        
+        if len(conversation) < 50:
+            return jsonify({"error": "Conversation too short to summarize"}), 400
+        
+        summary_result = summarizer(
+            conversation,
+            max_length=150,
+            min_length=30,
             do_sample=False
         )
+        summary = summary_result[0]['summary_text']
         
-        response = {
-            "summary": summary[0]["summary_text"],
-            "people": [],
-            "dates": [],
-            "actions": []
-        }
-        return jsonify(response)
+        action_items = extract_action_items(conversation)
+        
+        return jsonify({
+            "summary": summary,
+            "action_items": action_items
+        })
     
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"Error processing message: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@app.route("/", methods=["GET"])
-def health():
-    return jsonify({"status": "OK", "service": "Cliq Summary Bot"}), 200
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5001))
-    app.run(host="0.0.0.0", port=port)
-```
-
-4. Click **"Commit changes"** → **"Commit changes"**
-
----
-
-## ⚙️ **Why This Works:**
-
-✅ **DistilBART** is 40% smaller than BART  
-✅ **Lazy loading** - model loads only when first request comes  
-✅ **Memory efficient** - fits in 512MB  
-✅ **Same quality** summarization  
-✅ **Faster** response times
-
----
-
-## 📊 **Expected Deployment:**
-
-After you commit, watch the Render logs. You should see:
-```
-==> Build successful 🎉
-==> Deploying...
-==> Running 'gunicorn app:app --bind 0.0.0.0:$PORT'
-Starting Flask App...
-[INFO] Booting worker with pid: 123
-==> Your service is live 🎉
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
