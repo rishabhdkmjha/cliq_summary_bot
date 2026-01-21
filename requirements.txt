@@ -1,9 +1,14 @@
-pip==23.3
-Flask==2.3.3
+flask==3.0.0
 gunicorn==21.2.0
-numpy==1.26.4
 spacy==3.7.2
-transformers==4.37.2
-torch --index-url https://download.pytorch.org/whl/cpu
+transformers==4.36.0
+torch==2.1.0
+--extra-index-url https://download.pytorch.org/whl/cpu
+blis==0.7.11
+```
 
+**Then add a `runtime.txt` file** to specify Python version:
 
+**File: `runtime.txt`**
+```
+python-3.11.0
