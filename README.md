@@ -1,110 +1,26 @@
-🚀 Cliq Summary Bot
-An AI-powered Zoho Cliq bot that converts long chats into clear, concise summaries.
+metadata
+title: Cliq Summary Bot
+emoji: 💬
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: 4.16.0
+app_file: app.py
+pinned: false
+python_version: 3.11
+💬 Cliq Summary Bot
+Automatically summarize conversations and extract action items using AI!
 
-🧠 What is Cliq Summary Bot?
+🎯 Features
+📝 Smart Summarization: Uses DistilBART model
+✅ Action Item Extraction: Automatically identifies tasks
+🚀 Fast & Free: Runs on Hugging Face Spaces
+How to Use
+Paste your conversation text (minimum 50 characters)
+Click "Generate Summary"
+Get instant summary + action items
+Model
+Uses sshleifer/distilbart-cnn-12-6 for efficient summarization.
 
-Cliq Summary Bot is an intelligent summarization assistant for Zoho Cliq.
-It automatically condenses long conversations, documents, or messages into short, readable summaries using LLM/NLP-based APIs.
-
-Perfect for teams that want to save time, improve clarity, and boost productivity.
-
-
-🖼️ Workflow Diagram (User Perspective)
-User → Types "@summarybot summarize message"
-        ↓
-Bot Receives Text  
-        ↓  
-Bot Sends Text → Hugging Face Summarizer  
-        ↓  
-Receives Summary  
-        ↓  
-Bot Replies in Cliq with Clean Output  
-
-📸 Image Placeholders (replace with real screenshots)
-Bot in Action
-
-Zoho Cliq Slash Command UI
-
-✨ Features
-
-✔ Summarizes long chats, threads, and docs
-
-✔ Short / Medium / Detailed summary modes
-
-✔ No heavy ML dependencies (no PyTorch / no spaCy)
-
-✔ Uses cloud inference APIs
-
-✔ Works via @mention or slash commands
-
-✔ Lightweight and easy to deploy
-
-⚙️ Tech Stack
-Component	Technology
-Bot Platform	Zoho Cliq
-Backend	Node.js / Python
-AI Engine	Hugging Face Inference API
-Auth	API Key
-Deployment	Local / Cloud (Render, Railway, etc.)
-🚧 Deployment Status
-
-The bot is currently not deployed.
-A live server link will be added in the next update.
-
-You can still:
-
-Run it locally
-
-Explore the code
-
-Replace with your API key
-
-Deploy your own backend anytime
-
-🔧 Local Installation
-git clone https://github.com/<username>/cliq_summary_bot.git
-cd cliq_summary_bot
-npm install   # or pip install -r requirements.txt
-
-
-Add your Hugging Face key:
-
-HF_API_KEY=your_key_here
-
-
-Run:
-
-npm start   # or python app.py
-
-🧪 Usage
-
-In Zoho Cliq:
-
-/summarize The meeting discussion goes here...
-
-
-or
-
-@summarybot summarize the last 20 messages
-
-📂 Project Structure
-cliq_summary_bot/
-│── src/
-│   ├── api_handler.js
-│   ├── cliq_handler.js
-│   └── utils.js
-│── config/
-│   └── env.example
-│── assets/
-│   └── images (screenshots)
-│── README.md
-│── package.json
-└── .env
-
-🤝 Team
-
-Team Z CODE
-
-📄 License
-
+License
 MIT License
