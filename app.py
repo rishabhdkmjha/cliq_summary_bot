@@ -34,12 +34,10 @@ def process_conversation(conversation):
         if len(conversation) < 50:
             return "❌ Error: Conversation too short (minimum 50 characters)", ""
         
-        # Limit input length
         max_input_length = 1024
         if len(conversation) > max_input_length:
             conversation = conversation[:max_input_length]
         
-        # Generate summary
         summary_result = summarizer(
             conversation,
             max_length=130,
@@ -49,10 +47,8 @@ def process_conversation(conversation):
         )
         summary = summary_result[0]['summary_text']
         
-        # Extract action items
         action_items = extract_action_items(conversation)
         
-        # Format output
         action_items_text = "\n".join([f"• {item}" for item in action_items]) if action_items else "No action items detected"
         
         return summary, action_items_text
@@ -60,7 +56,6 @@ def process_conversation(conversation):
     except Exception as e:
         return f"❌ Error: {str(e)}", ""
 
-# Create Gradio interface
 with gr.Blocks(title="Cliq Summary Bot") as demo:
     gr.Markdown(
         """
