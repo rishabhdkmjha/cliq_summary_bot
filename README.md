@@ -24,8 +24,6 @@ Try the live demo here: https://rish06jha-cliq-summary-bot.hf.space
 
 > **Note:** Replace the URL above with your actual deployed Space URL after deployment.
 
-## 📸 Screenshots
-
 ### Web Interface
 The Gradio interface provides an easy-to-use web UI for testing:
 
@@ -342,6 +340,7 @@ Test thoroughly
 Commit with clear messages (git commit -m 'Add AmazingFeature')
 Push to your fork (git push origin feature/AmazingFeature)
 Open a Pull Request
+
 📝 License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
@@ -363,17 +362,20 @@ copies or substantial portions of the Software.
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
 🙏 Acknowledgments
 Model: DistilBART by Sam Shleifer
 Framework: Hugging Face Transformers
 UI: Gradio
 Hosting: Hugging Face Spaces
 Inspiration: Built for better conversation management and productivity
+
 📞 Support
 Documentation: This README
 Issues: GitHub Issues
 Discussions: GitHub Discussions
 Hugging Face Community: HF Forums
+
 🗺️ Roadmap
  Basic summarization functionality
  Action item extraction
@@ -385,6 +387,7 @@ Hugging Face Community: HF Forums
  Custom model fine-tuning
  Batch processing
  Export to various formats (PDF, Markdown, etc.)
+ 
 ⭐ Star History
 If you find this project useful, please consider giving it a star! It helps others discover the project.
 
