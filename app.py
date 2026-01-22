@@ -1,24 +1,14 @@
-from flask import Flask, request, jsonify
+import gradio as gr
 from transformers import pipeline
 import re
-import os
 
-app = Flask(__name__)
-
-print("Starting Flask App...")
-print("Loading lightweight model for summarization...")
-
-# Use smaller, more memory-efficient model
-try:
-    summarizer = pipeline(
-        "summarization", 
-        model="sshleifer/distilbart-cnn-12-6",
-        device=-1  # Force CPU usage
-    )
-    print("Model loaded successfully!")
-except Exception as e:
-    print(f"Error loading model: {e}")
-    summarizer = None
+print("Loading summarization model...")
+summarizer = pipeline(
+    "summarization", 
+    model="sshleifer/distilbart-cnn-12-6",
+    device=-1
+)
+print("Model loaded successfully!")
 
 def extract_action_items(text):
     """Extract action items from conversation text"""
@@ -38,38 +28,18 @@ def extract_action_items(text):
     
     return action_items[:5]
 
-@app.route('/', methods=['GET'])
-def home():
-    return jsonify({
-        "status": "running",
-        "message": "Cliq Summary Bot API is active",
-        "model": "sshleifer/distilbart-cnn-12-6",
-        "endpoints": {
-            "/process_message": "POST - Process conversation and return summary + action items"
-        }
-    })
-
-@app.route('/process_message', methods=['POST'])
-def process_message():
+def process_conversation(conversation):
+    """Process conversation and return summary + action items"""
     try:
-        if summarizer is None:
-            return jsonify({"error": "Model not loaded"}), 500
-            
-        data = request.get_json()
-        
-        if not data or 'conversation' not in data:
-            return jsonify({"error": "No conversation text provided"}), 400
-        
-        conversation = data['conversation']
-        
         if len(conversation) < 50:
-            return jsonify({"error": "Conversation too short to summarize"}), 400
+            return "❌ Error: Conversation too short (minimum 50 characters)", ""
         
-        # Limit input length to save memory
+        # Limit input length
         max_input_length = 1024
         if len(conversation) > max_input_length:
             conversation = conversation[:max_input_length]
         
+        # Generate summary
         summary_result = summarizer(
             conversation,
             max_length=130,
@@ -79,17 +49,66 @@ def process_message():
         )
         summary = summary_result[0]['summary_text']
         
+        # Extract action items
         action_items = extract_action_items(conversation)
         
-        return jsonify({
-            "summary": summary,
-            "action_items": action_items
-        })
+        # Format output
+        action_items_text = "\n".join([f"• {item}" for item in action_items]) if action_items else "No action items detected"
+        
+        return summary, action_items_text
     
     except Exception as e:
-        print(f"Error processing message: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return f"❌ Error: {str(e)}", ""
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+# Create Gradio interface
+with gr.Blocks(title="Cliq Summary Bot") as demo:
+    gr.Markdown(
+        """
+        # 💬 Cliq Summary Bot
+        
+        Automatically summarize conversations and extract action items!
+        
+        **How to use:**
+        1. Paste your conversation text below (minimum 50 characters)
+        2. Click "Generate Summary"
+        3. Get instant summary + action items
+        """
+    )
+    
+    with gr.Row():
+        with gr.Column():
+            input_text = gr.Textbox(
+                label="📝 Conversation Text",
+                placeholder="Paste your conversation here...",
+                lines=10
+            )
+            submit_btn = gr.Button("🚀 Generate Summary", variant="primary")
+        
+        with gr.Column():
+            summary_output = gr.Textbox(
+                label="📋 Summary",
+                lines=5
+            )
+            action_items_output = gr.Textbox(
+                label="✅ Action Items",
+                lines=5
+            )
+    
+    gr.Examples(
+        examples=[
+            ["John met Sarah yesterday at the park to discuss the new project plan. They decided to meet again next Monday to finalize the details and assign tasks to the team members."],
+            ["The team discussed the quarterly budget during the meeting. They agreed to increase marketing spend by 15% and will need to submit the proposal by Friday. Sarah will prepare the financial report."],
+            ["During the client call, we reviewed the project timeline. The client requested changes to the design mockups. We need to revise the wireframes and schedule a follow-up meeting next week to present the updated designs."]
+        ],
+        inputs=input_text,
+        label="📚 Example Conversations"
+    )
+    
+    submit_btn.click(
+        fn=process_conversation,
+        inputs=input_text,
+        outputs=[summary_output, action_items_output]
+    )
+
+if __name__ == "__main__":
+    demo.launch()
