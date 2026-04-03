@@ -22,7 +22,6 @@ An AI-powered conversation summarization bot that automatically extracts summari
 
 Try the live demo here: https://rish06jha-cliq-summary-bot.hf.space
 
-> **Note:** Replace the URL above with your actual deployed Space URL after deployment.
 
 ### Web Interface
 The Gradio interface provides an easy-to-use web UI for testing:
